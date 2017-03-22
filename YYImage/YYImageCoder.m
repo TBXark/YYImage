@@ -2841,7 +2841,7 @@ CGImageRef YYCGImageCreateWithWebPData(CFDataRef webpData,
                 alphaInfo == kCGImageAlphaFirst) {
                 hasAlpha = YES;
             }
-            hasAlpha = containAlpha || hasAlpha;
+            hasAlpha = containAlpha && hasAlpha;
             if (self.imageOrientation != UIImageOrientationUp) {
                 CGImageRef rotated = YYCGImageCreateCopyWithOrientation(imageRef, self.imageOrientation, bitmapInfo | alphaInfo);
                 if (rotated) {
