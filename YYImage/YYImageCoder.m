@@ -25,14 +25,14 @@
 
 #ifndef YYIMAGE_WEBP_ENABLED
 #if __has_include(<webp/decode.h>) && __has_include(<webp/encode.h>) && \
-    __has_include(<webp/demux.h>)  && __has_include(<webp/mux.h>)
+__has_include(<webp/demux.h>)  && __has_include(<webp/mux.h>)
 #define YYIMAGE_WEBP_ENABLED 1
 #import <webp/decode.h>
 #import <webp/encode.h>
 #import <webp/demux.h>
 #import <webp/mux.h>
 #elif __has_include("webp/decode.h") && __has_include("webp/encode.h") && \
-      __has_include("webp/demux.h")  && __has_include("webp/mux.h")
+__has_include("webp/demux.h")  && __has_include("webp/mux.h")
 #define YYIMAGE_WEBP_ENABLED 1
 #import "webp/decode.h"
 #import "webp/encode.h"
@@ -125,24 +125,24 @@ static inline uint32_t yy_swap_endian_uint32(uint32_t value) {
  frame data        (x) frame data for this frame (same as 'IDAT')
  
  ===============================================================================
- `dispose_op` specifies how the output buffer should be changed at the end of the delay 
+ `dispose_op` specifies how the output buffer should be changed at the end of the delay
  (before rendering the next frame).
  
  * NONE: no disposal is done on this frame before rendering the next; the contents
-    of the output buffer are left as is.
+ of the output buffer are left as is.
  * BACKGROUND: the frame's region of the output buffer is to be cleared to fully
-    transparent black before rendering the next frame.
+ transparent black before rendering the next frame.
  * PREVIOUS: the frame's region of the output buffer is to be reverted to the previous
-    contents before rendering the next frame.
-
+ contents before rendering the next frame.
+ 
  `blend_op` specifies whether the frame is to be alpha blended into the current output buffer
  content, or whether it should completely replace its region in the output buffer.
  
  * SOURCE: all color components of the frame, including alpha, overwrite the current contents
-    of the frame's output buffer region. 
+ of the frame's output buffer region.
  * OVER: the frame should be composited onto the output buffer based on its alpha,
-    using a simple OVER operation as described in the "Alpha Channel Processing" section
-    of the PNG specification
+ using a simple OVER operation as described in the "Alpha Channel Processing" section
+ of the PNG specification
  */
 
 typedef enum {
@@ -684,7 +684,7 @@ static void YYCGDataProviderReleaseDataCallback(void *info, const void *data, si
  
  @param srcImage   Source image.
  @param dest       Destination buffer. It should be zero before call this method.
-                   If decode succeed, you should release the dest->data using free().
+ If decode succeed, you should release the dest->data using free().
  @param destFormat Destination bitmap format.
  
  @return Whether succeed.
@@ -746,7 +746,7 @@ fail:
  
  @param srcImage   Source image.
  @param dest       Destination buffer. It should be zero before call this method.
-                   If decode succeed, you should release the dest->data using free().
+ If decode succeed, you should release the dest->data using free().
  @param bitmapInfo Destination bitmap format.
  
  @return Whether succeed.
@@ -1108,11 +1108,11 @@ YYImageType YYImageDetectType(CFDataRef data) {
                 return YYImageTypeWebP;
             }
         } break;
-        /*
-        case YY_FOUR_CC('B', 'P', 'G', 0xFB): { // BPG
-            return YYImageTypeBPG;
-        } break;
-        */
+            /*
+             case YY_FOUR_CC('B', 'P', 'G', 0xFB): { // BPG
+             return YYImageTypeBPG;
+             } break;
+             */
     }
     
     uint16_t magic2 = *((uint16_t *)bytes);
@@ -1753,7 +1753,7 @@ CGImageRef YYCGImageCreateWithWebPData(CFDataRef webpData,
     
     /*
      https://developers.google.com/speed/webp/docs/api
-     The documentation said we can use WebPIDecoder to decode webp progressively, 
+     The documentation said we can use WebPIDecoder to decode webp progressively,
      but currently it can only returns an empty image (not same as progressive jpegs),
      so we don't use progressive decoding.
      
@@ -1985,7 +1985,7 @@ CGImageRef YYCGImageCreateWithWebPData(CFDataRef webpData,
             }
         }
     }
-
+    
     /*
      ICO, GIF, APNG may contains multi-frame.
      */
@@ -2339,7 +2339,7 @@ CGImageRef YYCGImageCreateWithWebPData(CFDataRef webpData,
     _type = type;
     _images = [NSMutableArray new];
     _durations = [NSMutableArray new];
-
+    
     switch (type) {
         case YYImageTypeJPEG:
         case YYImageTypeJPEG2000: {
@@ -2429,7 +2429,7 @@ CGImageRef YYCGImageCreateWithWebPData(CFDataRef webpData,
 - (void)_encodeImageWithDestination:(CGImageDestinationRef)destination imageCount:(NSUInteger)count {
     if (_type == YYImageTypeGIF) {
         NSDictionary *gifProperty = @{(__bridge id)kCGImagePropertyGIFDictionary:
-                                        @{(__bridge id)kCGImagePropertyGIFLoopCount: @(_loopCount)}};
+                                          @{(__bridge id)kCGImagePropertyGIFLoopCount: @(_loopCount)}};
         CGImageDestinationSetProperties(destination, (__bridge CFDictionaryRef)gifProperty);
     }
     
@@ -2794,7 +2794,7 @@ CGImageRef YYCGImageCreateWithWebPData(CFDataRef webpData,
 
 - (void)yy_saveToAlbumWithCompletionBlock:(void(^)(NSURL *assetURL, NSError *error))completionBlock {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSData *data = [self _yy_dataRepresentationForSystem:YES];
+        NSData *data = [self _yy_dataRepresentationForSystem:YES containerAlpha:YES];
         ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
         [library writeImageDataToSavedPhotosAlbum:data metadata:nil completionBlock:^(NSURL *assetURL, NSError *error){
             if (!completionBlock) return;
@@ -2809,12 +2809,12 @@ CGImageRef YYCGImageCreateWithWebPData(CFDataRef webpData,
     });
 }
 
-- (NSData *)yy_imageDataRepresentation {
-    return [self _yy_dataRepresentationForSystem:NO];
+- (NSData *)yy_imageDataRepresentation:(BOOL)containAlpha {
+    return [self _yy_dataRepresentationForSystem:NO containerAlpha:containAlpha];
 }
 
 /// @param forSystem YES: used for system album (PNG/JPEG/GIF), NO: used for YYImage (PNG/JPEG/GIF/WebP)
-- (NSData *)_yy_dataRepresentationForSystem:(BOOL)forSystem {
+- (NSData *)_yy_dataRepresentationForSystem:(BOOL)forSystem containerAlpha:(BOOL)containAlpha {
     NSData *data = nil;
     if ([self isKindOfClass:[YYImage class]]) {
         YYImage *image = (id)self;
@@ -2841,6 +2841,7 @@ CGImageRef YYCGImageCreateWithWebPData(CFDataRef webpData,
                 alphaInfo == kCGImageAlphaFirst) {
                 hasAlpha = YES;
             }
+            hasAlpha = containAlpha || hasAlpha;
             if (self.imageOrientation != UIImageOrientationUp) {
                 CGImageRef rotated = YYCGImageCreateCopyWithOrientation(imageRef, self.imageOrientation, bitmapInfo | alphaInfo);
                 if (rotated) {

@@ -97,31 +97,31 @@ typedef NS_ENUM(NSUInteger, YYImageBlendOperation) {
  An image decoder to decode image data.
  
  @discussion This class supports decoding animated WebP, APNG, GIF and system
- image format such as PNG, JPG, JP2, BMP, TIFF, PIC, ICNS and ICO. It can be used 
- to decode complete image data, or to decode incremental image data during image 
+ image format such as PNG, JPG, JP2, BMP, TIFF, PIC, ICNS and ICO. It can be used
+ to decode complete image data, or to decode incremental image data during image
  download. This class is thread-safe.
  
  Example:
  
-    // Decode single image:
-    NSData *data = [NSData dataWithContentOfFile:@"/tmp/image.webp"];
-    YYImageDecoder *decoder = [YYImageDecoder decoderWithData:data scale:2.0];
-    UIImage image = [decoder frameAtIndex:0 decodeForDisplay:YES].image;
+ // Decode single image:
+ NSData *data = [NSData dataWithContentOfFile:@"/tmp/image.webp"];
+ YYImageDecoder *decoder = [YYImageDecoder decoderWithData:data scale:2.0];
+ UIImage image = [decoder frameAtIndex:0 decodeForDisplay:YES].image;
  
-    // Decode image during download:
-    NSMutableData *data = [NSMutableData new];
-    YYImageDecoder *decoder = [[YYImageDecoder alloc] initWithScale:2.0];
-    while(newDataArrived) {
-        [data appendData:newData];
-        [decoder updateData:data final:NO];
-        if (decoder.frameCount > 0) {
-            UIImage image = [decoder frameAtIndex:0 decodeForDisplay:YES].image;
-            // progressive display...
-        }
-    }
-    [decoder updateData:data final:YES];
-    UIImage image = [decoder frameAtIndex:0 decodeForDisplay:YES].image;
-    // final display...
+ // Decode image during download:
+ NSMutableData *data = [NSMutableData new];
+ YYImageDecoder *decoder = [[YYImageDecoder alloc] initWithScale:2.0];
+ while(newDataArrived) {
+ [data appendData:newData];
+ [decoder updateData:data final:NO];
+ if (decoder.frameCount > 0) {
+ UIImage image = [decoder frameAtIndex:0 decodeForDisplay:YES].image;
+ // progressive display...
+ }
+ }
+ [decoder updateData:data final:YES];
+ UIImage image = [decoder frameAtIndex:0 decodeForDisplay:YES].image;
+ // final display...
  
  */
 @interface YYImageDecoder : NSObject
@@ -150,11 +150,11 @@ typedef NS_ENUM(NSUInteger, YYImageBlendOperation) {
  image when you do not have the complete image data. The `data` was retained by
  decoder, you should not modify the data in other thread during decoding.
  
- @param data  The data to add to the image decoder. Each time you call this 
- function, the 'data' parameter must contain all of the image file data 
+ @param data  The data to add to the image decoder. Each time you call this
+ function, the 'data' parameter must contain all of the image file data
  accumulated so far.
  
- @param final  A value that specifies whether the data is the final set. 
+ @param final  A value that specifies whether the data is the final set.
  Pass YES if it is, NO otherwise. When the data is already finalized, you can
  not update the data anymore.
  
@@ -174,7 +174,7 @@ typedef NS_ENUM(NSUInteger, YYImageBlendOperation) {
  Decodes and returns a frame from a specified index.
  @param index  Frame image index (zero-based).
  @param decodeForDisplay Whether decode the image to memory bitmap for display.
-    If NO, it will try to returns the original frame data without blend.
+ If NO, it will try to returns the original frame data without blend.
  @return A new frame with image, or nil if an error occurs.
  */
 - (nullable YYImageFrame *)frameAtIndex:(NSUInteger)index decodeForDisplay:(BOOL)decodeForDisplay;
@@ -214,18 +214,18 @@ typedef NS_ENUM(NSUInteger, YYImageBlendOperation) {
  It also supports encoding multi-frame image with GIF, APNG and WebP.
  
  Example:
-    
-    YYImageEncoder *jpegEncoder = [[YYImageEncoder alloc] initWithType:YYImageTypeJPEG];
-    jpegEncoder.quality = 0.9;
-    [jpegEncoder addImage:image duration:0];
-    NSData jpegData = [jpegEncoder encode];
  
-    YYImageEncoder *gifEncoder = [[YYImageEncoder alloc] initWithType:YYImageTypeGIF];
-    gifEncoder.loopCount = 5;
-    [gifEncoder addImage:image0 duration:0.1];
-    [gifEncoder addImage:image1 duration:0.15];
-    [gifEncoder addImage:image2 duration:0.2];
-    NSData gifData = [gifEncoder encode];
+ YYImageEncoder *jpegEncoder = [[YYImageEncoder alloc] initWithType:YYImageTypeJPEG];
+ jpegEncoder.quality = 0.9;
+ [jpegEncoder addImage:image duration:0];
+ NSData jpegData = [jpegEncoder encode];
+ 
+ YYImageEncoder *gifEncoder = [[YYImageEncoder alloc] initWithType:YYImageTypeGIF];
+ gifEncoder.loopCount = 5;
+ [gifEncoder addImage:image0 duration:0.1];
+ [gifEncoder addImage:image1 duration:0.15];
+ [gifEncoder addImage:image2 duration:0.2];
+ NSData gifData = [gifEncoder encode];
  
  @warning It just pack the images together when encoding multi-frame image. If you
  want to reduce the image file size, try imagemagick/ffmpeg for GIF and WebP,
@@ -308,7 +308,7 @@ typedef NS_ENUM(NSUInteger, YYImageBlendOperation) {
 @interface UIImage (YYImageCoder)
 
 /**
- Decompress this image to bitmap, so when the image is displayed on screen, 
+ Decompress this image to bitmap, so when the image is displayed on screen,
  the main thread won't be blocked by additional decode. If the image has already
  been decoded or unable to decode, it just returns itself.
  
@@ -324,15 +324,15 @@ typedef NS_ENUM(NSUInteger, YYImageBlendOperation) {
 @property (nonatomic) BOOL yy_isDecodedForDisplay;
 
 /**
- Saves this image to iOS Photos Album. 
+ Saves this image to iOS Photos Album.
  
  @discussion  This method attempts to save the original data to album if the
- image is created from an animated GIF/APNG, otherwise, it will save the image 
+ image is created from an animated GIF/APNG, otherwise, it will save the image
  as JPEG or PNG (based on the alpha information).
  
  @param completionBlock The block invoked (in main thread) after the save operation completes.
-    assetURL: An URL that identifies the saved image file. If the image is not saved, assetURL is nil.
-    error: If the image is not saved, an error object that describes the reason for failure, otherwise nil.
+ assetURL: An URL that identifies the saved image file. If the image is not saved, assetURL is nil.
+ error: If the image is not saved, an error object that describes the reason for failure, otherwise nil.
  */
 - (void)yy_saveToAlbumWithCompletionBlock:(nullable void(^)(NSURL * _Nullable assetURL, NSError * _Nullable error))completionBlock;
 
@@ -345,7 +345,7 @@ typedef NS_ENUM(NSUInteger, YYImageBlendOperation) {
  
  @return Image data, or nil if an error occurs.
  */
-- (nullable NSData *)yy_imageDataRepresentation;
+- (nullable NSData *)yy_imageDataRepresentation:(BOOL)containAlpha;
 
 @end
 
@@ -400,7 +400,7 @@ CG_EXTERN NSInteger YYUIImageOrientationToEXIFValue(UIImageOrientation orientati
  
  @param imageRef          The source image.
  @param decodeForDisplay  If YES, this method will decode the image and convert
-          it to BGRA8888 (premultiplied) or BGRX8888 format for CALayer display.
+ it to BGRA8888 (premultiplied) or BGRX8888 format for CALayer display.
  
  @return A decoded image, or NULL if an error occurs.
  */
@@ -461,13 +461,13 @@ CG_EXTERN NSUInteger YYImageGetWebPFrameCount(CFDataRef webpData);
  
  @param webpData          The WebP data.
  @param decodeForDisplay  If YES, this method will decode the image and convert it
-                            to BGRA8888 (premultiplied) format for CALayer display.
+ to BGRA8888 (premultiplied) format for CALayer display.
  @param useThreads        YES to enable multi-thread decode.
-                            (speed up, but cost more CPU)
+ (speed up, but cost more CPU)
  @param bypassFiltering   YES to skip the in-loop filtering.
-                            (speed up, but may lose some smooth)
+ (speed up, but may lose some smooth)
  @param noFancyUpsampling YES to use faster pointwise upsampler.
-                            (speed down, and may lose some details).
+ (speed down, and may lose some details).
  @return The decoded image, or NULL if an error occurs.
  */
 CG_EXTERN CGImageRef _Nullable YYCGImageCreateWithWebPData(CFDataRef webpData,
@@ -491,7 +491,7 @@ typedef NS_ENUM(NSUInteger, YYImagePreset) {
  @param imageRef      image
  @param lossless      YES=lossless (similar to PNG), NO=lossy (similar to JPEG)
  @param quality       0.0~1.0 (0=smallest file, 1.0=biggest file)
-                      For lossless image, try the value near 1.0; for lossy, try the value near 0.8.
+ For lossless image, try the value near 1.0; for lossy, try the value near 0.8.
  @param compressLevel 0~6 (0=fast, 6=slower-better). Default is 4.
  @param preset        Preset for different image type, default is YYImagePresetDefault.
  @return WebP data, or nil if an error occurs.
